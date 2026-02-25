@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Huey Luey’s • Down Bar Weekly Deep Clean</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --huey-green:#1e7f4f;
+      --huey-green-dark:#16643e;
+      --huey-orange:#d35400;
+      --ink:#1f2937;
+      --paper:#f6f1e8;
+      --card:#ffffff;
+      --muted:#6b7280;
+      --shadow:0 8px 18px rgba(0,0,0,.10);
+      --shadow-soft:0 4px 12px rgba(0,0,0,.08);
+      --radius:14px;
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family:'Poppins', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background:var(--paper);
+      color:var(--ink);
+      overflow-x:hidden;
+    }
+
+    .topbar{
+      background:var(--huey-green);
+      color:#fff;
+      padding:18px 14px 14px;
+      text-align:center;
+    }
+    .brand{
+      font-weight:800;
+      letter-spacing:1px;
+      font-size:22px;
+      line-height:1.1;
+    }
+    .title{
+      margin-top:6px;
+      font-weight:700;
+      font-size:16px;
+      color:#fff;
+      opacity:.95;
+    }
+
+    .wrap{
+      max-width:860px;
+      margin:0 auto;
+      padding:14px 14px 28px;
+    }
+
+    .subline{
+      text-align:center;
+      color:var(--huey-orange);
+      font-weight:700;
+      margin:14px 0 10px;
+      font-size:16px;
+    }
+
+    /* Views + transitions */
+    .view{
+      transition: opacity .25s ease, transform .25s ease;
+      will-change: opacity, transform;
+    }
+    .hidden{
+      opacity:0;
+      transform: translateY(14px);
+      pointer-events:none;
+      position:absolute;
+      width:100%;
+      left:0;
+    }
+    .active{
+      opacity:1;
+      transform: translateY(0);
+      position:relative;
+    }
+
+    /* Buttons */
+    .btn{
+      border:0;
+      cursor:pointer;
+      font-weight:800;
+      border-radius:var(--radius);
+      padding:16px 16px;
+      width:100%;
+      max-width:430px;
+      margin:10px auto;
+      display:block;
+      transition: transform .12s ease, box-shadow .12s ease, background .18s ease, color .18s ease, border-color .18s ease;
+      box-shadow: var(--shadow-soft);
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn:active{
+      transform: scale(.97);
+      box-shadow: 0 3px 10px rgba(0,0,0,.10);
+    }
+
+    /* Day cards */
+    .btn-day{
+      background:var(--card);
+      border:3px solid var(--huey-green);
+      color:var(--huey-green);
+      font-size:18px;
+      letter-spacing:.2px;
+    }
+    .btn-day:hover{
+      background:var(--huey-green);
+      color:#fff;
+      transform: translateY(-1px);
+      box-shadow: var(--shadow);
+    }
+
+    /* Shift buttons */
+    .btn-shift{
+      color:#fff;
+      font-size:18px;
+      letter-spacing:.4px;
+    }
+    .btn-am{ background:var(--huey-green); }
+    .btn-am:hover{ background:var(--huey-green-dark); }
+    .btn-pm{ background:var(--huey-orange); }
+    .btn-pm:hover{ filter:brightness(.95); }
+
+    /* Back */
+    .btn-back{
+      background:#3f3f46;
+      color:#fff;
+      font-weight:700;
+      max-width:320px;
+      padding:14px 16px;
+      margin-top:18px;
+    }
+
+    /* Document */
+    .doc{
+      background: rgba(255,255,255,.72);
+      border:2px solid rgba(30,127,79,.25);
+      border-radius: 18px;
+      padding: 14px;
+      box-shadow: var(--shadow-soft);
+      margin-top: 12px;
+    }
+    .dochead{
+      text-align:left;
+      padding: 10px 10px 6px;
+    }
+    .dochead h2{
+      margin:0;
+      font-size:20px;
+      font-weight:800;
+      color:var(--huey-green);
+      line-height:1.2;
+    }
+    .dochead .meta{
+      margin-top:6px;
+      font-weight:800;
+      color:var(--huey-orange);
+      font-size:14px;
+    }
+
+    .divider{
+      height:4px;
+      border-radius:999px;
+      margin: 10px 10px 14px;
+      background: linear-gradient(to right, var(--huey-green), var(--huey-orange));
+    }
+
+    .task{
+      background: var(--card);
+      border-left: 6px solid var(--huey-orange);
+      border-radius: 14px;
+      padding: 14px 14px;
+      margin: 12px 10px;
+      box-shadow: var(--shadow-soft);
+      transition: transform .18s ease, box-shadow .18s ease;
+    }
+    .task:hover{
+      transform: translateY(-2px);
+      box-shadow: var(--shadow);
+    }
+
+    .taskline{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      line-height:1.35;
+      font-weight:600;
+      font-size:15px;
+    }
+    .check{
+      width:22px; height:22px;
+      border-radius:7px;
+      background: rgba(30,127,79,.12);
+      border: 2px solid rgba(30,127,79,.35);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      flex: 0 0 22px;
+      margin-top:1px;
+    }
+    .check::before{
+      content:"✓";
+      font-size:14px;
+      color: var(--huey-green);
+      font-weight:900;
+    }
+
+    .area{
+      border-left-color: var(--huey-green);
+      background: linear-gradient(180deg, rgba(30,127,79,.08), rgba(255,255,255,1));
+    }
+    .area .taskline{
+      font-weight:800;
+    }
+    .area .check{
+      background: rgba(211,84,0,.10);
+      border-color: rgba(211,84,0,.30);
+    }
+    .area .check::before{
+      content:"★";
+      color: var(--huey-orange);
+      font-size:12px;
+    }
+
+    .note{
+      border-left-color: #111827;
+      background: linear-gradient(180deg, rgba(17,24,39,.06), rgba(255,255,255,1));
+    }
+    .note .check{
+      background: rgba(17,24,39,.08);
+      border-color: rgba(17,24,39,.20);
+    }
+    .note .check::before{
+      content:"!";
+      color:#111827;
+      font-size:14px;
+    }
+
+    .task img{
+      width:100%;
+      max-width: 560px;
+      display:block;
+      margin: 10px 0 0;
+      border-radius: 12px;
+      box-shadow: 0 6px 16px rgba(0,0,0,.10);
+    }
+
+    .small{
+      text-align:center;
+      color: var(--muted);
+      font-size:12px;
+      margin-top:10px;
+    }
+
+    @media (min-width: 720px){
+      .wrap{ padding: 18px 18px 34px; }
+      .title{ font-size:17px; }
+      .subline{ font-size:18px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand">HUEY LUEY’S</div>
+    <div class="title">Down Bar Weekly Deep Clean</div>
+  </div>
+
+  <div class="wrap">
+    <div class="subline">Scan • Select Day • Select Shift • Follow the Checklist</div>
+
+    <div id="view-days" class="view active"></div>
+    <div id="view-shifts" class="view hidden"></div>
+    <div id="view-doc" class="view hidden"></div>
+
+    <div class="small">Tip: This is a static offline version. Update later by replacing this file.</div>
+  </div>
+
+<script>
+  // Data model: day -> shift -> items
+  // Supports optional images: add " | https://image-url" at end of a line to attach an image.
+  const RAW_LINES = [
+    `Monday\tAM\tArea: Above Cabinets by House Liquors.Above the Bar Shelf.`,
+    `Monday\tAM\t- High Dust Celing and Lights`,
+    `Monday\tAM\t- Clean bottles and Shelves`,
+    `Monday\tAM\t- Re-Organize Shelves for Liquor Order`,
+    `Monday\tAM\t- Wash All Glasses`,
+    `Monday\tAM\t- Clean all matts and Clean under them.`,
+    `Monday\tAM\t- Clean walls behind liquor shelves and Glassware.`,
+    `Monday\tAM\t- Clean the sink area, soap dispenser, and paper towel dispenser.`,
+    `Monday\tAM\t- Put away all deliveries and organizing the items before end of shift.`,
+    `Monday\tAM\tWhen finished grab a manager to check you off!`,
+    `Monday\tPM\tArea: Main Well and Sink`,
+    `Monday\tPM\t- Clean under the main well - any rust build up or dirt -`,
+    `Monday\tPM\t- Clean the legs and all metal in the main well`,
+    `Monday\tPM\t- Clean the sink next to the main well - all metal inclduing legs and bottom.`,
+    `Monday\tPM\t- Clean the walls behind the well and sink`,
+    `Monday\tPM\t- Clean the floor and the floor drain`,
+    `Monday\tPM\t- Clean the Bar Gun thoroughly - removing any build-up or dirt.`,
+    `Monday\tPM\t- Clean all the white C02 pipes`,
+    `Monday\tPM\t- Any old fly traps or air freshners put to the side and replace the air filter or throw away the trap`,
+    `Monday\tPM\t- Clean all the spouts being use by the bottles`,
+    `Monday\tPM\t- Clean all juice storage bottles thoruughly, ensuring no building or wear and tear!`,
+    `Monday\tPM\t- Pour 12oz of Bleach into drain.`,
+    `Monday\tPM\tWhen finished grab a manager to check you off!`,
+
+    `Tuesday\tAM\tArea: POS Area. Above the Bar Shelf.`,
+    `Tuesday\tAM\t- High Dust Celing and Lights`,
+    `Tuesday\tAM\t- Clean bottles and Shelves`,
+    `Tuesday\tAM\t- Organize the liguor shelves.`,
+    `Tuesday\tAM\t- Clean the Pos Station/Printer inside and out, be sure to clean under the items as well.`,
+    `Tuesday\tAM\t- Wash All Glasses`,
+    `Tuesday\tAM\t- Clean all matts and Clean under them.`,
+    `Tuesday\tAM\t- Clean the Blender thoroughly.`,
+    `Tuesday\tAM\t- Check that Plants / Speciality Decor are Clean as well`,
+    `Tuesday\tAM\t- Clean the Bar drawer and the bar drawer holder as well. Throw away any extra items in the drawer.`,
+    `Tuesday\tAM\t- Check the area between the window and bar shelf is clean and free of trash or dirt.`,
+    `Tuesday\tAM\t- Put away all deliveries and organizing the items before end of shift.`,
+    `Tuesday\tAM\t- Ensure the area is cleaned and orgained, no trash remiaining.`,
+    `Tuesday\tAM\tWhen finished grab a manager to check you off!`,
+    `Tuesday\tPM\tArea: Liquor Wells by Main Well.`,
+    `Tuesday\tPM\t- Empty and Clean bottles in wells`,
+    `Tuesday\tPM\t- If label comes off , re-label in the correct area.`,
+    `Tuesday\tPM\t- Clean the floor / walls behind and under bottle opener / white C02 lines under / next to the Wells.`,
+    `Tuesday\tPM\t- Clean the ceiling and lights above this area.`,
+    `Tuesday\tPM\t- Wash all spouts on the bottles.`,
+    `Tuesday\tPM\tWhen finished grab a manager to check you off!`,
+
+    `Wednesday\tAM\tArea: Sink by prep table to Dishwaer`,
+    `Wednesday\tAM\t- Clean all metal in the sinks - includiong the legs and bottoms`,
+    `Wednesday\tAM\t- Clean all the metal in the drain comaprtment on the dirshwaher`,
+    `Wednesday\tAM\t- Clean the entire dishwaser inside and out - including all legs , underneath, inside, and behind.`,
+    `Wednesday\tAM\t- Remove the food trap and clean it thorughly as well.`,
+    `Wednesday\tAM\t- Clean the detergent if the lid has build up or debris.`,
+    `Wednesday\tAM\t- Clean the walls behind all the equipment.`,
+    `Wednesday\tAM\t- Clean the ceiling and lights above this area.`,
+    `Wednesday\tAM\t- Clean the floors thoroughly.`,
+    `Wednesday\tAM\t- Put away all deliveries and organizing the items before end of shift.`,
+    `Wednesday\tAM\t- Pour 12oz of Bleach into each drain.`,
+    `Wednesday\tAM\tWhen finished grab a manager to check you off!`,
+    `Wednesday\tPM\tArea: Storage well to Storage well.`,
+    `Wednesday\tPM\t- Remove all items from storage wells.`,
+    `Wednesday\tPM\t- Clean all bottles and ensure items are clean.`,
+    `Wednesday\tPM\t- Clean all metal on the well - inside / under / behind / and legs free of rust or dirt.`,
+    `Wednesday\tPM\t- Clean all walls behind wells.`,
+    `Wednesday\tPM\t- Clean the old Bar Gun and Bar Gun Storage.`,
+    `Wednesday\tPM\t- Clean the corner where the C02 pump is.`,
+    `Wednesday\tPM\t- Clean the bar part of the patio - where the chair sit and in the corner to the right.`,
+    `Wednesday\tPM\t- Clean all C02 Lines behind the equipment.`,
+    `Wednesday\tPM\t- Clean the ceiling and lights above this area.`,
+    `Wednesday\tPM\t- Clean the floors thoroughly.`,
+    `Wednesday\tPM\tWhen finished grab a manager to check you off!`,
+
+    `Thursday\tAM\tArea: Area above storage container, above the bar shelf.`,
+    `Thursday\tAM\t- High Dust Celing and Lights`,
+    `Thursday\tAM\t- Clean bottles and Shelves`,
+    `Thursday\tAM\t- Organize the liguor shelves.`,
+    `Thursday\tAM\t- Clean the corner of the bar where the light sit - inclduing the wall.`,
+    `Thursday\tAM\t- Wash All Glasses`,
+    `Thursday\tAM\t- Clean all matts and Clean under them.`,
+    `Thursday\tAM\t- Check that Plants / Speciality Decor are Clean as well`,
+    `Thursday\tAM\t- Clean the Tv carefully in front and behind.`,
+    `Thursday\tAM\t- Clean the bar shelf including the Paper towel dispenser.`,
+    `Thursday\tAM\t- Clean the bar storage shelves on under TV / Paper Towel Dispenser.`,
+    `Thursday\tAM\t- Clean the drain under shelves and Pour 12oz of Bleach into drain.`,
+    `Thursday\tAM\t- Check the area between the window and bar shelf is clean and free of trash or dirt.`,
+    `Thursday\tAM\t- Clean all walls aorund this area.`,
+    `Thursday\tAM\t- Ensure the area is cleaned and orgained, no trash remiaining.`,
+    `Thursday\tAM\t- Put away all deliveries and organizing the items before end of shift.`,
+    `Thursday\tAM\tWhen finished grab a manager to check you off!`,
+    `Thursday\tPM\tArea; Storage Units near patio.`,
+    `Thursday\tPM\t- Remove everything from inside the units.`,
+    `Thursday\tPM\t- Pull out the units and have a busser scrub and clean the floors thoroughly..`,
+    `Thursday\tPM\t- Clean inside / outside / bottom / and backside of storage units - removing any rust or dirt.`,
+    `Thursday\tPM\tHave a manager check floor and cabinets before pushing back in.`,
+
+    `Friday\tAM\tArea: Right side of Bar display shelves where the Big Glass sits and Prep Table.`,
+    `Friday\tAM\t- Empty and Drain Jalaepno Sculpture / Clean  ( Hand Clean No Dishwasher ) and re-build the sculpture.`,
+    `Friday\tAM\t- High Dust Celing and Lights`,
+    `Friday\tAM\t- Clean Bottles and Shelves`,
+    `Friday\tAM\t- Wash All Glasses`,
+    `Friday\tAM\t- Clean all Matts and Clean under them`,
+    `Friday\tAM\t- Check that Plants / Speciality Decor are Clean as well`,
+    `Friday\tAM\t- Check the area between the window and bar shelf is clean and free of trash or dirt.`,
+    `Friday\tAM\t- Clean the entire Prep Table`,
+    `Friday\tAM\t- Clean the walls behind the prep table.`,
+    `Friday\tAM\t- Clean the floor thorughly under the prep table.`,
+    `Friday\tAM\t- Clean the ceiling and lights above this area.`,
+    `Friday\tAM\t- Put away all deliveries and organizing the items before end of shift.`,
+    `Friday\tAM\tWhen finished grab a manager to check you off!`,
+    `Friday\tPM\tArea: Right side Margarita Machine and 3rd Cooler.`,
+    `Friday\tPM\t- Empty and Drain Margarita Machine`,
+    `Friday\tPM\t- Clean entire Margarita Machine - Inside / Front / Left and Right Side / Back of Margarita Machine.`,
+    `Friday\tPM\t- Check sharpness of white blade, if dull show a manager.`,
+    `Friday\tPM\t- Clean under the Margarita Machine.`,
+    `Friday\tPM\t- Wash and clean all peices of the margarita machine.`,
+    `Friday\tPM\t- Use the Gel to lubricate peices that assist with the machine function.`,
+    `Friday\tPM\t- Remove all items in cooler , check for cleanliness and check expiration dates.`,
+    `Friday\tPM\t- Pull cooler out and have a busser thorughly scrub and clean the floor underneath.`,
+    `Friday\tPM\t- Clean the insdie of the cooler thorughly.`,
+    `Friday\tPM\t- Organize the cooler.`,
+    `Friday\tPM\tBefore pushing the cooler back into palce and re-filling the margarita machine - Grab a manager to check.`,
+
+    `Saturday\tAM\tArea: Left side of Bar display shelves where the Big Glass sits and the rack for holding mixes..`,
+    `Saturday\tAM\t- Empty and Drain Pineapple Sculpture / Clean  ( Hand Clean No Dishwasher ) and re-build the sculpture.`,
+    `Saturday\tAM\t- High Dust Celing and Lights`,
+    `Saturday\tAM\t- Clean Bottles and Shelves`,
+    `Saturday\tAM\t- Wash All Glasses`,
+    `Saturday\tAM\t- Clean all Matts and Clean under them`,
+    `Saturday\tAM\t- Check that Plants / Speciality Decor are Clean as well`,
+    `Saturday\tAM\t- Check the area between the window and bar shelf is clean and free of trash or dirt.`,
+    `Saturday\tAM\t- Clean the entire Holding Rack`,
+    `Saturday\tAM\t- Clean the walls behind the Holding Rack.`,
+    `Saturday\tAM\t- Clean the floor thorughly under the Holding Rack.`,
+    `Saturday\tAM\t- Clean the ceiling and lights above this area.`,
+    `Saturday\tAM\t- Unwtist and Clean inside the Beer Spouts.`,
+    `Saturday\tAM\t- Clean the Tv carefully in front and behind.`,
+    `Saturday\tAM\t- Clean the bar shelf including the Paper towel dispenser.`,
+    `Saturday\tAM\t- Clean the bar storage shelves on under TV / Paper Towel Dispenser.`,
+    `Saturday\tAM\t- Clean the drain under shelves and Pour 12oz of Bleach into drain.`,
+    `Saturday\tAM\t- Check the area between the window and bar shelf is clean and free of trash or dirt.`,
+    `Saturday\tAM\t- Clean all walls aorund this area.`,
+    `Saturday\tAM\t- Ensure the area is cleaned and orgained, no trash remiaining.`,
+    `Saturday\tAM\tWhen finished grab a manager to check you off!`,
+    `Saturday\tPM\tArea: Left side Margarita Machine and 2rd Cooler.`,
+    `Saturday\tPM\t- If only one bartender schdeuled have closing manager assist with the clean.`,
+    `Saturday\tPM\t- Empty and Drain Margarita Machine`,
+    `Saturday\tPM\t- Clean entire Margarita Machine - Inside / Front / Left and Right Side / Back of Margarita Machine.`,
+    `Saturday\tPM\t- Check sharpness of white blade, if dull show a manager.`,
+    `Saturday\tPM\t- Clean under the Margarita Machine.`,
+    `Saturday\tPM\t- Wash and clean all peices of the margarita machine.`,
+    `Saturday\tPM\t- Use the Gel to lubricate peices that assist with the machine function.`,
+    `Saturday\tPM\t- Remove all items in cooler , check for cleanliness and check expiration dates.`,
+    `Saturday\tPM\t- Pull cooler out and have a busser thorughly scrub and clean the floor underneath.`,
+    `Saturday\tPM\t- Clean the insdie of the cooler thorughly.`,
+    `Saturday\tPM\t- Organize the cooler.`,
+    `Saturday\tPM\tBefore pushing the cooler back into palce and re-filling the margarita machine - Grab a manager to check.`,
+
+    `Sunday\tAM\tArea: Lower cabinets at main liquor shelves.`,
+    `Sunday\tAM\t- Remove all items from the wooden cabinets ( inclduing the cabinet next to the cooler ) and Black rolling storage container.`,
+    `Sunday\tAM\t- Clean each cabinet insinde and outside of them of thoroughly.`,
+    `Sunday\tAM\t- Clean the floors under and around the cabinets.`,
+    `Sunday\tAM\t- Pour 12 oz of Bleach into the white drain and the main drain in the middle.`,
+    `Sunday\tAM\t- Throw away any trash or debris in cabinets.`,
+    `Sunday\tAM\t- Re-organize the cabinets thorurlghy.`,
+    `Sunday\tAM\t- Using a scrub brush clean the exterior part of the bar where guest sit to the patio gargae door.`,
+    `Sunday\tAM\tWhen finished grab a manager to check you off!`,
+    `Sunday\tPM\tArea: 1st cooler under POS and Beer Cooler.`,
+    `Sunday\tPM\t- Remove all items from cooler.`,
+    `Sunday\tPM\t- Pull out the cooler and have a busser clean and scrub the floors thoroughly.`,
+    `Sunday\tPM\t- Clean the entire insisde of the cooler.`,
+    `Sunday\tPM\t- Check for expired product and cleanliness of the products.`,
+    `Sunday\tPM\t- Clean all spouts and item sitting the cooler.`,
+    `Sunday\tPM\tHave a manager check the floor and cooler before puhsing it back in.`,
+    `Sunday\tPM\t- Organize the beer cooler.`,
+    `Sunday\tPM\t- Open all boxes left inside.`,
+    `Sunday\tPM\t- Sweep the floor inside the Beer Cooler.`,
+    `Sunday\tPM\t- Put away any left out items ( Drink Cups, Paper , Measuring Cups, Etc. )`,
+    `Sunday\tPM\tHave a manager assist and check you off when completed!`
+  ];
+
+  function normalizeDay(d){
+    return (d || '').trim().replace(/\s+/g,' ');
+  }
+  function normalizeShift(s){
+    return (s || '').trim().toUpperCase();
+  }
+
+  function parseLine(line){
+    const parts = line.split('\t');
+    const day = normalizeDay(parts[0]);
+    const shift = normalizeShift(parts[1]);
+    const rawTask = (parts.slice(2).join('\t') || '').trim();
+
+    // Optional image support: "Task text | https://image"
+    let task = rawTask;
+    let image = "";
+    if (rawTask.includes(" | ")) {
+      const split = rawTask.split(" | ");
+      task = (split[0] || "").trim();
+      image = (split[1] || "").trim();
+    }
+
+    return { day, shift, task, image };
+  }
+
+  const DATA = {};
+  for (const line of RAW_LINES){
+    const {day, shift, task, image} = parseLine(line);
+    if (!day || !shift || !task) continue;
+    DATA[day] ??= {};
+    DATA[day][shift] ??= [];
+    DATA[day][shift].push({ task, image });
+  }
+
+  const DAYS = Object.keys(DATA);
+
+  const elDays = document.getElementById('view-days');
+  const elShifts = document.getElementById('view-shifts');
+  const elDoc = document.getElementById('view-doc');
+
+  let currentDay = "";
+  let currentShift = "";
+
+  function switchView(hideEl, showEl){
+    hideEl.classList.remove('active');
+    hideEl.classList.add('hidden');
+
+    showEl.classList.remove('hidden');
+    showEl.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function renderDays(){
+    elDays.innerHTML = `
+      <div class="section-title" style="text-align:center;">Select Day</div>
+      ${DAYS.map(d => `<button class="btn btn-day" data-day="${encodeURIComponent(d)}">${d}</button>`).join('')}
+    `;
+
+    elDays.querySelectorAll('button[data-day]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        currentDay = decodeURIComponent(btn.getAttribute('data-day'));
+        renderShifts(currentDay);
+        switchView(elDays, elShifts);
+      });
+    });
+  }
+
+  function renderShifts(day){
+    const shifts = Object.keys(DATA[day] || {}).sort((a,b)=> a.localeCompare(b));
+    elShifts.innerHTML = `
+      <div class="section-title">${day} — Select Shift</div>
+      ${shifts.includes('AM') ? `<button class="btn btn-shift btn-am" data-shift="AM">AM</button>` : ``}
+      ${shifts.includes('PM') ? `<button class="btn btn-shift btn-pm" data-shift="PM">PM</button>` : ``}
+      <button class="btn btn-back" id="backToDays">⬅ Back to Days</button>
+    `;
+
+    elShifts.querySelectorAll('button[data-shift]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        currentShift = btn.getAttribute('data-shift');
+        renderDoc(currentDay, currentShift);
+        switchView(elShifts, elDoc);
+      });
+    });
+
+    document.getElementById('backToDays').addEventListener('click', ()=>{
+      switchView(elShifts, elDays);
+    });
+  }
+
+  function classifyTask(taskText){
+    const t = taskText.trim();
+    const lower = t.toLowerCase();
+    if (lower.startsWith('area:') || lower.startsWith('area;') || lower.startsWith('area ')) return 'area';
+    if (lower.includes('grab a manager') || lower.includes('check you off') || lower.startsWith('before pushing') || lower.startsWith('have a manager')) return 'note';
+    return '';
+  }
+
+  function cleanBullet(taskText){
+    return taskText.replace(/^\-\s*/, '').trim();
+  }
+
+  function renderDoc(day, shift){
+    const items = (DATA[day] && DATA[day][shift]) ? DATA[day][shift] : [];
+
+    const cards = items.map(({task, image})=>{
+      const type = classifyTask(task);
+      const displayText = cleanBullet(task);
+
+      const imgHtml = image ? `<img src="${image}" alt="Task image">` : '';
+      return `
+        <div class="task ${type}">
+          <div class="taskline">
+            <div class="check"></div>
+            <div>${displayText}</div>
+          </div>
+          ${imgHtml}
+        </div>
+      `;
+    }).join('');
+
+    elDoc.innerHTML = `
+      <div class="doc">
+        <div class="dochead">
+          <h2>Down Bar Weekly Deep Clean</h2>
+          <div class="meta">${day} • ${shift}</div>
+        </div>
+        <div class="divider"></div>
+        ${cards || `<div class="task note"><div class="taskline"><div class="check"></div><div>No tasks found.</div></div></div>`}
+        <button class="btn btn-back" id="backToShifts">⬅ Back to Shifts</button>
+      </div>
+    `;
+
+    document.getElementById('backToShifts').addEventListener('click', ()=>{
+      switchView(elDoc, elShifts);
+    });
+  }
+
+  renderDays();
+</script>
+</body>
+</html>
